@@ -2,25 +2,133 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Video</title>
 
 <style>
-html, body, iframe {
+/* Reset */
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Fullscreen base */
+html, body {
   width: 100%;
   height: 100%;
   background: black;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Video container */
+#container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: black;
+}
+
+/* YouTube iframe */
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Unmute button */
+#unmute {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.75);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 10;
+  user-select: none;
+}
+
+/* ---------- RESPONSIVE RULES ---------- */
+
+/* Mobile phones */
+@media (max-width: 768px) {
+  iframe {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  #unmute {
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+}
+
+/* Desktop / laptops */
+@media (min-width: 769px) {
+  iframe {
+    width: 100vw;
+    height: 100vh;
+  }
+}
+
+/* Portrait-specific tweaks */
+@media (orientation: portrait) {
+  iframe {
+    aspect-ratio: 9 / 16;
+    max-height: 100vh;
+    max-width: 100vw;
+  }
+}
+
+/* Landscape-specific tweaks */
+@media (orientation: landscape) {
+  iframe {
+    aspect-ratio: 16 / 9;
+    max-height: 100vh;
+    max-width: 100vw;
+  }
 }
 </style>
 </head>
+
 <body>
 
-<iframe
-  src="https://www.youtube.com/embed/J4fJInuarUU?autoplay=1&mute=1&playsinline=1&controls=1&rel=0"
-  allow="autoplay; fullscreen; picture-in-picture"
-  allowfullscreen>
-</iframe>
+<div id="container">
+  <iframe
+    id="player"
+    src="https://www.youtube.com/embed/J4fJInuarUU?autoplay=1&mute=1&playsinline=1&controls=1&rel=0"
+    allow="autoplay; fullscreen"
+    allowfullscreen>
+  </iframe>
+</div>
+
+<div id="unmute">🔊 Tap for sound</div>
+
+<script>
+/* Detect touch devices */
+const isTouchDevice =
+  'ontouchstart' in window ||
+  navigator.maxTouchPoints > 0;
+
+/* Optional: adjust UI for touch */
+if (isTouchDevice) {
+  document.getElementById('unmute').style.fontSize = '16px';
+}
+
+/* One-tap unmute */
+document.getElementById("unmute").addEventListener("click", () => {
+  const iframe = document.getElementById("player");
+  iframe.src = iframe.src.replace("mute=1", "mute=0");
+  document.getElementById("unmute").style.display = "none";
+});
+</script>
 
 </body>
 </html>
